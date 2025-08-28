@@ -508,6 +508,7 @@
         font-size: 1.4rem;
         line-height: 1.4;
         margin-bottom: 24px;
+        word-break: break-word; /* Fix for mobile text glitch */
     }
     .opts {
       display: grid;
@@ -528,6 +529,7 @@
       font-weight: 500;
       transition: all .2s ease;
       box-shadow: inset 0 1px 1px rgba(255,255,255,0.03);
+      word-break: break-word; /* Fix for mobile text glitch */
     }
 
     .opt:not(:disabled):hover {
@@ -645,6 +647,7 @@
       color: var(--ink-100);
       font-weight: 500;
       padding-right: 16px;
+      word-break: break-word; /* Fix for mobile text glitch */
     }
     .hist-meta-cell {
       width: 240px; /* Increased width */
@@ -1333,10 +1336,7 @@
             if (!settings.soundEffects && !id.includes('background')) return;
             const soundElement = document.getElementById(id);
             if (soundElement) {
-                soundElement.volume = Math.max(0, Math.min(volume, 1));
-                if(id === 'sound-incorrect') {
-                    soundElement.volume = Math.max(0, Math.min(volume, 2));
-                }
+                soundElement.volume = Math.max(0, Math.min(volume, 1)); // Volume is capped at 1.0 (100%)
                 soundElement.currentTime = 0;
                 soundElement.play().catch(e => {});
             }
@@ -2830,7 +2830,7 @@
                             <div class="title">Incorrect Answer Volume</div>
                         </div>
                         <div class="setting-control">
-                            <input type="range" id="incorrectVolumeSlider" min="0" max="2" step="0.05" value="${settings.incorrectVolume}">
+                            <input type="range" id="incorrectVolumeSlider" min="0" max="1" step="0.05" value="${settings.incorrectVolume}">
                             <span id="incorrectVolumeLabel">${Math.round(settings.incorrectVolume * 100)}%</span>
                         </div>
                     </div>
@@ -3516,6 +3516,7 @@
 
     /* ---------- Results Screen ---------- */
     function showResults() {
+        Sound.playNavigate(); // Added sound to finish button
         hide(quizPanel);
         const scoreRatio = ctx.score / ctx.chosen.length;
         let result;
@@ -3578,6 +3579,7 @@
     /* ---------- Boot ---------- */
     document.addEventListener('DOMContentLoaded', () => {
         const splash = $("#splashScreen");
+        
         if (settings.showTribute) {
             setTimeout(() => {
                 splash.classList.add("splash-fade-out");
@@ -3600,6 +3602,8 @@
             Sound.toggleMute();
         };
 
+        // This single event listener on the body will "unlock" audio playback on mobile browsers,
+        // which helps prevent the initial sound lag.
         document.body.addEventListener('click', () => {
             if (settings.backgroundMusic) {
                 Sound.playBackgroundMusic();
