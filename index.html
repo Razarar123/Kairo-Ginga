@@ -53,7 +53,7 @@
       background-attachment: fixed; /* Fixes the "chopped" background issue */
     }
     
-    button {
+    button, input, textarea {
         font-family: inherit;
     }
 
@@ -85,13 +85,14 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column; /* Allows content to grow naturally */
+      padding: 32px 16px; /* Add padding to the page container */
     }
 
     .shell {
-      max-width: 1200px; /* Increased width */
-      width: 100%;
-      margin: 32px auto;
-      padding: 18px 18px 24px;
+      width: 100%; /* Make shell take full width of its parent */
+      max-width: 1200px; /* But cap it at 1200px */
+      margin: 0 auto; /* Center the shell horizontally */
+      padding: 24px;
       background: linear-gradient(180deg, var(--panel), var(--panel2));
       border: 1px solid var(--line);
       border-radius: 18px;
@@ -116,7 +117,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
       gap: 16px;
     }
@@ -126,20 +127,21 @@
         align-items: center;
         gap: 24px;
         flex-wrap: wrap;
+        flex-grow: 1; /* Allow left side to grow */
     }
 
     .header-controls {
       display: flex;
       align-items: center;
       gap: 16px;
-      flex-wrap: wrap;
+      flex-shrink: 0; /* Prevent controls from shrinking */
     }
     
     .brand {
       color: var(--ink-100);
-      font-size: 1.35rem;
+      font-size: 1.5rem;
       font-weight: 800;
-      letter-spacing: .2px
+      letter-spacing: .2px;
     }
 
     /* ===== Nav / Tabs ===== */
@@ -150,7 +152,8 @@
       border: 1px solid var(--line);
       padding: 8px;
       border-radius: 14px;
-      box-shadow: var(--shadow)
+      box-shadow: var(--shadow);
+      flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
     }
 
     .tab {
@@ -160,7 +163,10 @@
       font-weight: 700;
       padding: 8px 12px;
       border-radius: 10px;
-      cursor: pointer
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .tab:hover {
@@ -281,7 +287,8 @@
       display: flex;
       gap: 8px;
       align-items: center;
-      margin: 6px 0 12px
+      margin: 6px 0 12px;
+      flex-wrap: wrap;
     }
 
     .crumb {
@@ -359,7 +366,7 @@
     /* ===== Stats / Grid ===== */
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Make stats responsive */
       gap: 12px;
       margin: 8px 0 14px
     }
@@ -637,6 +644,7 @@
       flex: 1;
       color: var(--ink-100);
       font-weight: 500;
+      padding-right: 16px;
     }
     .hist-meta-cell {
       width: 240px; /* Increased width */
@@ -775,6 +783,8 @@
         align-items: center;
         padding: 16px;
         border-top: 1px solid var(--line);
+        flex-wrap: wrap;
+        gap: 12px;
     }
     .setting-text .title {
         color: var(--ink-100);
@@ -888,7 +898,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        transition: opacity 1s ease-out;
+        transition: opacity 0.5s ease-out;
         -webkit-backdrop-filter: blur(8px);
         backdrop-filter: blur(8px);
         background-color: rgba(11, 16, 32, 0.7);
@@ -951,12 +961,13 @@
         height: 200%;
         background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
         transform: rotate(25deg);
-        animation: shiny-effect 3s infinite;
+        animation: shiny-effect 3s ease-in-out infinite;
         pointer-events: none;
     }
     @keyframes shiny-effect {
         0% { transform: translateX(-75%) rotate(25deg); }
-        100% { transform: translateX(75%) rotate(25deg); }
+        50% { transform: translateX(75%) rotate(25deg); }
+        100% { transform: translateX(-75%) rotate(25deg); }
     }
     @keyframes result-fade-in {
         to {
@@ -992,7 +1003,33 @@
       display: none !important;
     }
 
+    /* --- Tablet & Small Desktop (640px and up) --- */
+    @media (min-width: 640px) {
+        .list, .subject-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    /* --- Medium Desktop (960px and up) --- */
+    @media (min-width: 960px) {
+        .opts {
+            grid-template-columns: repeat(2, 1fr); /* 2 columns for quiz options on wider screens */
+        }
+    }
+
+    /* --- Large Desktop (1024px and up) --- */
+    @media (min-width: 1024px) {
+        .list, .subject-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+
+    /* --- Mobile styles (up to 960px) --- */
     @media (max-width: 960px) {
+        .page {
+            padding: 16px 8px; /* Reduce padding on mobile */
+        }
         .header-left {
             width: 100%;
             justify-content: center;
@@ -1001,33 +1038,14 @@
             width: 100%;
             justify-content: center;
         }
-    }
-
-    @media (max-width: 768px) {
-      .stats {
-        grid-template-columns: 1fr
-      }
-
-      .subject-grid {
-        grid-template-columns: 1fr
-      }
-
-      .tabs {
-          gap: 4px;
-          padding: 6px;
-      }
-      .tab {
-          padding: 6px 10px;
-          font-size: 0.9rem;
-      }
-      .brand {
-          font-size: 1.2rem;
+        .brand {
+          font-size: 1.3rem;
           text-align: center;
           width: 100%;
-      }
-      .header-left {
-          gap: 12px;
-      }
+        }
+        .tabs {
+          justify-content: center;
+        }
     }
     
   </style>
@@ -1059,7 +1077,8 @@
   <audio id="sound-incorrect" src="Incorrect.mp3" preload="auto"></audio>
   <audio id="sound-finish-good" src="WIN.mp3" preload="auto"></audio>
   <audio id="sound-finish-bad" src="Game Over.mp3" preload="auto"></audio>
-  <audio id="sound-background" src="Chill & Relaxing Pokémon Music Mix [YMEblRM4pGc].mp3" loop preload="auto"></audio>
+  <audio id="sound-background-chill" src="Chill & Relaxing Pokémon Music Mix [YMEblRM4pGc].mp3" loop preload="auto"></audio>
+  <audio id="sound-background-hype" src="My Top Ten BEST Undertale Soundtracks.mp3" loop preload="auto"></audio>
   <!-- END: AUDIO ELEMENTS FOR SOUND EFFECTS -->
 
   <div class="page">
@@ -1069,9 +1088,11 @@
             <div class="brand">Microbiology Study Hub</div>
             <div id="tabs" class="tabs">
                 <button class="tab active" data-tab="subjects">📚 Subjects</button>
-                <button class="tab" data-tab="progress">📊 Progress</button>
-                <button class="tab" data-tab="history">⌛ Wrong History</button>
+                <button class="tab" data-tab="customQuiz">🔀 Custom Quiz</button>
                 <button class="tab" data-tab="qbank">🏦 Question Bank</button>
+                <button class="tab" data-tab="progress">📊 Progress</button>
+                <button class="tab" data-tab="history">⌛ History</button>
+                <button class="tab" data-tab="tutorials">📖 Tutorials</button>
                 <button class="tab" data-tab="settings">⚙️ Settings</button>
             </div>
         </div>
@@ -1084,14 +1105,20 @@
       <!-- SUBJECTS -->
       <section id="subjectsView"></section>
 
+      <!-- CUSTOM QUIZ -->
+      <section id="customQuizView" class="hidden"></section>
+
+      <!-- QUESTION BANK -->
+      <section id="qbankView" class="hidden"></section>
+      
       <!-- PROGRESS -->
       <section id="progressView" class="hidden"></section>
 
       <!-- WRONG HISTORY -->
       <section id="historyView" class="hidden"></section>
       
-      <!-- QUESTION BANK -->
-      <section id="qbankView" class="hidden"></section>
+      <!-- TUTORIALS -->
+      <section id="tutorialsView" class="hidden"></section>
 
       <!-- SETTINGS -->
       <section id="settingsView" class="hidden"></section>
@@ -1180,12 +1207,12 @@
       if (!t) return;
       t.textContent = msg;
       t.classList.remove("hidden");
-      setTimeout(() => t.classList.add("hidden"), 1400)
+      setTimeout(() => t.classList.add("hidden"), 3000); // Changed to 3 seconds
     }
 
     /* ---------- Local Storage State ---------- */
     const PROGRESS_KEY = "studyhub_progress_v3";
-    const SETTINGS_KEY = "studyhub_settings_v5"; // Incremented version for new settings
+    const SETTINGS_KEY = "studyhub_settings_v7"; // Incremented version for new settings
 
     const S_Progress = () => {
       try {
@@ -1201,9 +1228,13 @@
                 randomizeQuestionOrder: true,
                 shuffleAnswerOrder: true,
                 excludeSeenQuestions: false,
+                randomizeAll: false,
+                defaultSetQuestions: 5,
+                defaultRandomQuestions: 10,
                 showTribute: true,
                 soundEffects: true,
                 backgroundMusic: true,
+                backgroundMusicTrack: 'chill',
                 backgroundMusicVolume: 0.3,
                 correctVolume: 1.0,
                 incorrectVolume: 1.0,
@@ -1220,9 +1251,13 @@
                 randomizeQuestionOrder: true,
                 shuffleAnswerOrder: true,
                 excludeSeenQuestions: false,
+                randomizeAll: false,
+                defaultSetQuestions: 5,
+                defaultRandomQuestions: 10,
                 showTribute: true,
                 soundEffects: true,
                 backgroundMusic: true,
+                backgroundMusicTrack: 'chill',
                 backgroundMusicVolume: 0.3,
                 correctVolume: 1.0,
                 incorrectVolume: 1.0,
@@ -1268,6 +1303,10 @@
     const Sound = {
         _fadeInterval: null,
         
+        getCurrentMusicElement: () => {
+            return $(`#sound-background-${settings.backgroundMusicTrack}`);
+        },
+
         fadeVolume: (audioElement, targetVolume, duration = 1000) => {
             clearInterval(Sound._fadeInterval);
             const startVolume = audioElement.volume;
@@ -1296,7 +1335,6 @@
             if (soundElement) {
                 soundElement.volume = Math.max(0, Math.min(volume, 1));
                 if(id === 'sound-incorrect') {
-                    // Allow volume up to 2 (200%) for incorrect sound, capped by browser at 1 but allows relative loudness
                     soundElement.volume = Math.max(0, Math.min(volume, 2));
                 }
                 soundElement.currentTime = 0;
@@ -1305,39 +1343,40 @@
         },
         playBackgroundMusic: () => {
             if (!settings.backgroundMusic) return;
-            const bgMusic = document.getElementById('sound-background');
+            const bgMusic = Sound.getCurrentMusicElement();
             if (bgMusic && bgMusic.paused) {
                 bgMusic.volume = settings.backgroundMusicVolume;
                 bgMusic.play().catch(e => {});
             }
         },
-        pauseBackgroundMusic: () => {
-            const bgMusic = document.getElementById('sound-background');
-            if (bgMusic) bgMusic.pause();
-        },
-        stopBackgroundMusic: () => {
-            const bgMusic = document.getElementById('sound-background');
-            if (bgMusic) {
-                bgMusic.pause();
-                bgMusic.currentTime = 0;
-            }
+        stopAllBackgroundMusic: () => {
+            $$('audio[id^="sound-background-"]').forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
         },
         toggleMute: () => {
-            const bgMusic = document.getElementById('sound-background');
+            const bgMusic = Sound.getCurrentMusicElement();
             if (!bgMusic) return;
             settings.musicMuted = !settings.musicMuted;
-            bgMusic.muted = settings.musicMuted;
+            $$('audio[id^="sound-background-"]').forEach(audio => audio.muted = settings.musicMuted);
             W_Settings(settings);
             updateMusicToggleButton();
         },
+        switchTrack: (newTrack) => {
+            Sound.stopAllBackgroundMusic();
+            settings.backgroundMusicTrack = newTrack;
+            W_Settings(settings);
+            Sound.playBackgroundMusic();
+        },
         duckBackgroundMusic: (duration = 400) => {
-            const bgMusic = document.getElementById('sound-background');
+            const bgMusic = Sound.getCurrentMusicElement();
             if (bgMusic && !bgMusic.paused && !bgMusic.muted) {
                 Sound.fadeVolume(bgMusic, 0.1, duration);
             }
         },
         unduckBackgroundMusic: () => {
-            const bgMusic = document.getElementById('sound-background');
+            const bgMusic = Sound.getCurrentMusicElement();
              if (bgMusic && !bgMusic.paused && !bgMusic.muted) {
                 Sound.fadeVolume(bgMusic, settings.backgroundMusicVolume, 1500);
             }
@@ -1354,29 +1393,20 @@
     const SUBJECTS = [{
       code: "BIOPY4",
       type: "subtopics",
-      sets: 5,
-      perSet: 5
     }, {
       code: "IMM201",
       type: "plain",
-      sets: 5,
-      perSet: 5
     }, {
       code: "MBG301",
       type: "plain",
-      sets: 5,
-      perSet: 5
     }, ];
     const SUBTOPICS = {
       "BIOPY4": [{
         name: "Cell Structure & Function",
-        perSet: 5
       }, {
         name: "Microbial Growth & Control",
-        perSet: 5
       }, {
         name: "Genetics & Molecular Biology",
-        perSet: 5
       }, ]
     };
 
@@ -2087,6 +2117,8 @@
     const progressView = $("#progressView");
     const historyView = $("#historyView");
     const qbankView = $("#qbankView");
+    const customQuizView = $("#customQuizView");
+    const tutorialsView = $("#tutorialsView");
     const settingsView = $("#settingsView");
     const quizPanel = $("#quizPanel");
 
@@ -2099,7 +2131,7 @@
       btn.classList.add("active");
       currentTab = btn.dataset.tab;
 
-      const views = [subjectsView, progressView, historyView, qbankView, settingsView, quizPanel];
+      const views = [subjectsView, progressView, historyView, qbankView, customQuizView, tutorialsView, settingsView, quizPanel];
       views.forEach(v => hide(v));
 
       if (currentTab === "subjects") {
@@ -2114,6 +2146,12 @@
       } else if (currentTab === "qbank") {
         show(qbankView);
         renderQuestionBank();
+      } else if (currentTab === "customQuiz") {
+        show(customQuizView);
+        renderCustomQuiz();
+      } else if (currentTab === "tutorials") {
+        show(tutorialsView);
+        renderTutorials();
       } else if (currentTab === "settings") {
         show(settingsView);
         renderSettings();
@@ -2141,6 +2179,24 @@
     /* ---------- Subjects ---------- */
     function renderSubjects() {
       subjectsView.innerHTML = "";
+
+      if(settings.randomizeAll) {
+          const btn = document.createElement("button");
+          btn.className = "btn primary";
+          btn.textContent = "🚀 Start Fully Randomized Quiz";
+          btn.style.width = "100%";
+          btn.style.padding = "20px";
+          btn.style.fontSize = "1.2rem";
+          btn.onclick = () => {
+              const allQuestions = Object.values(POOL).flat();
+              const questionSelection = shuffleArray(allQuestions).slice(0, settings.defaultRandomQuestions);
+              renderQuiz('Full Random', '1', settings.defaultRandomQuestions, questionSelection);
+          };
+          subjectsView.append(btn);
+          subjectsView.append(document.createElement("hr"));
+      }
+
+
       const list = document.createElement("div");
       list.className = "list";
       SUBJECTS.forEach(s => {
@@ -2190,7 +2246,7 @@
       subjectsView.append(list);
     }
     
-    function makeSetRow(key, i, perSet, renderFn) {
+    function makeSetRow(key, i, renderFn) {
       const row = document.createElement("button");
       row.className = "row";
       const L = document.createElement("div");
@@ -2218,7 +2274,10 @@
         renderFn(); // Re-render the current view
       };
       R.append(badge, restart);
-      row.onclick = () => renderQuiz(key, i, perSet);
+      row.onclick = () => {
+          Sound.playNavigate();
+          renderQuiz(key, i, settings.defaultSetQuestions);
+      };
       row.append(L, R);
       return row;
     }
@@ -2232,9 +2291,10 @@
 
       const list = document.createElement("div");
       list.className = "list";
-      for (let i = 1; i <= subject.sets; i++) {
+      const totalSets = Math.ceil(POOL[`${subject.code}::${sub.name}`].length / settings.defaultSetQuestions);
+      for (let i = 1; i <= totalSets; i++) {
         const key = `${subject.code}::${sub.name}`;
-        list.append(makeSetRow(key, i, sub.perSet, () => renderSetsSub(subject, sub)));
+        list.append(makeSetRow(key, i, () => renderSetsSub(subject, sub)));
       }
       subjectsView.append(list);
     }
@@ -2248,9 +2308,10 @@
 
       const list = document.createElement("div");
       list.className = "list";
-      for (let i = 1; i <= subject.sets; i++) {
+      const totalSets = Math.ceil(POOL[subject.code].length / settings.defaultSetQuestions);
+      for (let i = 1; i <= totalSets; i++) {
         const key = subject.code;
-        list.append(makeSetRow(key, i, subject.perSet, () => renderSetsPlain(subject)));
+        list.append(makeSetRow(key, i, () => renderSetsPlain(subject)));
       }
       subjectsView.append(list);
     }
@@ -2258,29 +2319,33 @@
     /* ---------- Quiz ---------- */
     let ctx = null; // {key,index,perSet,chosen,i,score,answered}
     
-    function renderQuiz(key, setIndex, perSet) {
-        let pool = (POOL[key] || []).slice();
-        
-        if (settings.excludeSeenQuestions) {
-            const progress = S_Progress();
-            const seenIds = new Set(Object.keys(progress.__seen || {}));
-            const unseenPool = pool.filter(q => !seenIds.has(q.id));
-
-            if (unseenPool.length > 0) {
-                pool = unseenPool;
-            } else {
-                toast("All questions in this topic have been seen!");
-            }
-        }
-
+    function renderQuiz(key, setIndex, perSet, customQuestions = null) {
         let questionSelection;
 
-        if (settings.randomizeSetSelection) {
-            const shuffledPool = shuffleArray(pool);
-            questionSelection = shuffledPool.slice(0, perSet);
+        if (customQuestions) {
+            questionSelection = customQuestions;
         } else {
-            const start = (setIndex - 1) * perSet;
-            questionSelection = pool.slice(start, start + perSet);
+            let pool = (POOL[key] || []).slice();
+            
+            if (settings.excludeSeenQuestions) {
+                const progress = S_Progress();
+                const seenIds = new Set(Object.keys(progress.__seen || {}));
+                const unseenPool = pool.filter(q => !seenIds.has(q.id));
+
+                if (unseenPool.length > 0) {
+                    pool = unseenPool;
+                } else {
+                    toast("All questions in this topic have been seen!");
+                }
+            }
+
+            if (settings.randomizeSetSelection) {
+                const shuffledPool = shuffleArray(pool);
+                questionSelection = shuffledPool.slice(0, perSet);
+            } else {
+                const start = (setIndex - 1) * perSet;
+                questionSelection = pool.slice(start, start + perSet);
+            }
         }
         
         const progress = S_Progress();
@@ -2313,6 +2378,8 @@
       hide(progressView);
       hide(historyView);
       hide(qbankView);
+      hide(customQuizView);
+      hide(tutorialsView);
       hide(settingsView);
       show(quizPanel);
 
@@ -2324,8 +2391,10 @@
           hide(quizPanel);
           renderFn(...args);
       };
-
-      if (key.includes("::")) {
+      
+      if (key === 'Custom Quiz' || key === 'Full Random') {
+          bc.append(active(key));
+      } else if (key.includes("::")) {
         const [scode, sub] = key.split("::");
         const subjectData = SUBJECTS.find(s => s.code === scode);
         const subtopicData = SUBTOPICS[scode].find(s => s.name === sub);
@@ -2344,7 +2413,7 @@
         );
       }
 
-      ctx = { key, index: setIndex, perSet, chosen, i: 0, score: 0, answered: 0 };
+      ctx = { key, index: setIndex, perSet: chosen.length, chosen, i: 0, score: 0, answered: 0 };
       
       $("#btnNext").onclick = () => {
         Sound.playNavigate();
@@ -2359,7 +2428,7 @@
     }
 
     function handleNext() {
-        const last = (ctx.answered === ctx.chosen.length);
+        const last = (ctx.i === ctx.chosen.length - 1);
         if (last) {
             hide($('#btnNext'));
             show($('#btnFinish'));
@@ -2487,17 +2556,15 @@
         const displayList = [];
         SUBJECTS.forEach(s => {
             if (s.type === 'plain') {
-                totalPossibleSets += s.sets;
-                displayList.push({ code: s.code, key: s.code, sets: s.sets, perSet: s.perSet });
+                totalPossibleSets += Math.ceil(POOL[s.code].length / settings.defaultSetQuestions);
+                displayList.push({ code: s.code, key: s.code });
             } else if (s.type === 'subtopics') {
                 const subtopics = SUBTOPICS[s.code] || [];
                 subtopics.forEach(sub => {
-                    totalPossibleSets += s.sets;
+                    totalPossibleSets += Math.ceil(POOL[`${s.code}::${sub.name}`].length / settings.defaultSetQuestions);
                     displayList.push({ 
                         code: `${s.code} - ${sub.name}`, 
-                        key: `${s.code}::${sub.name}`, 
-                        sets: s.sets, 
-                        perSet: sub.perSet || s.perSet 
+                        key: `${s.code}::${sub.name}`
                     });
                 });
             }
@@ -2532,20 +2599,21 @@
             head.className = "sub-head";
             
             const done = Object.keys(S_Progress()[item.key] || {}).length;
-            head.innerHTML = `<div class="sub-title">${item.code}</div><div class="sub-meta">${done}/${item.sets} sets</div>`;
+            const totalSets = Math.ceil(POOL[item.key].length / settings.defaultSetQuestions);
+            head.innerHTML = `<div class="sub-title">${item.code}</div><div class="sub-meta">${done}/${totalSets} sets</div>`;
             card.append(head);
 
             const meter = document.createElement("div");
             meter.className = "meter";
             const mf = document.createElement("div");
             mf.className = "meter-fill";
-            mf.style.width = (done / item.sets * 100) + "%";
+            mf.style.width = (done / totalSets * 100) + "%";
             meter.append(mf);
             card.append(meter);
 
             const chips = document.createElement("div");
             chips.className = "chips";
-            for (let i = 1; i <= item.sets; i++) {
+            for (let i = 1; i <= totalSets; i++) {
                 const state = getSet(item.key, i);
                 const chip = document.createElement("button");
                 chip.className = "chip " + (state ? "chip-ok" : "chip-warn");
@@ -2573,7 +2641,10 @@
                 };
 
                 chip.append(emoji, label, reset);
-                chip.onclick = () => renderQuiz(item.key, i, item.perSet);
+                chip.onclick = () => {
+                    Sound.playNavigate();
+                    renderQuiz(item.key, i, settings.defaultSetQuestions);
+                }
 
                 chips.append(chip);
             }
@@ -2617,6 +2688,34 @@
                     <div class="chevron">›</div>
                 </div>
                 <div class="setting-group-content">
+                    <div class="setting-row">
+                        <div class="setting-text">
+                            <div class="title">Default Set Questions</div>
+                            <div class="desc">Number of questions per set. (Min: 5)</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" id="defaultSetQuestionsInput" value="${settings.defaultSetQuestions}" min="5" style="width: 80px; padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--tile2); color: var(--ink-100);">
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-text">
+                            <div class="title">Default Random Questions</div>
+                            <div class="desc">Number of questions for "Randomize All". (Min: 10)</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" id="defaultRandomQuestionsInput" value="${settings.defaultRandomQuestions}" min="10" style="width: 80px; padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--tile2); color: var(--ink-100);">
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-text">
+                            <div class="title">Randomize All Subjects & Sets</div>
+                            <div class="desc">Adds a quick-start button to the Subjects page.</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="randomizeAllToggle" ${settings.randomizeAll ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                     <div class="setting-row">
                         <div class="setting-text">
                             <div class="title">Exclude Seen Questions</div>
@@ -2688,6 +2787,16 @@
                             <input type="checkbox" id="backgroundMusicToggle" ${settings.backgroundMusic ? 'checked' : ''}>
                             <span class="slider"></span>
                         </label>
+                    </div>
+                     <div class="setting-row">
+                        <div class="setting-text">
+                            <div class="title">Music Track</div>
+                            <div class="desc">Choose your study vibe.</div>
+                        </div>
+                        <div class="setting-control" id="musicTrackControl">
+                           <button class="mini ${settings.backgroundMusicTrack === 'chill' ? 'active' : ''}" data-track="chill">Chill</button>
+                           <button class="mini ${settings.backgroundMusicTrack === 'hype' ? 'active' : ''}" data-track="hype">Hype</button>
+                        </div>
                     </div>
                     <div class="setting-row">
                         <div class="setting-text">
@@ -2763,6 +2872,7 @@
 
         // Event Listeners for Toggles
         $("#showTributeToggle").addEventListener('change', e => { settings.showTribute = e.target.checked; W_Settings(settings); });
+        $("#randomizeAllToggle").addEventListener('change', e => { settings.randomizeAll = e.target.checked; W_Settings(settings); });
         $("#excludeSeenToggle").addEventListener('change', e => { settings.excludeSeenQuestions = e.target.checked; W_Settings(settings); });
         $("#randomizeSetSelectionToggle").addEventListener('change', e => { settings.randomizeSetSelection = e.target.checked; W_Settings(settings); });
         $("#randomizeQuestionOrderToggle").addEventListener('change', e => { settings.randomizeQuestionOrder = e.target.checked; W_Settings(settings); });
@@ -2773,8 +2883,41 @@
             settings.backgroundMusic = e.target.checked;
             W_Settings(settings);
             if (settings.backgroundMusic) Sound.playBackgroundMusic();
-            else Sound.stopBackgroundMusic();
+            else Sound.stopAllBackgroundMusic();
             updateMusicToggleButton();
+        });
+        
+        // Music Track Selection
+        $('#musicTrackControl').addEventListener('click', e => {
+            const btn = e.target.closest('.mini');
+            if(!btn) return;
+            $$('.mini', e.currentTarget).forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            Sound.switchTrack(btn.dataset.track);
+        });
+
+        // Event Listeners for Number Inputs
+        $("#defaultSetQuestionsInput").addEventListener('change', e => {
+            let val = parseInt(e.target.value, 10);
+            if (isNaN(val) || val < 5) {
+                val = 5;
+                e.target.value = val;
+                toast("Minimum questions per set is 5.");
+            }
+            settings.defaultSetQuestions = val;
+            W_Settings(settings);
+            toast("Default set length saved.");
+        });
+        $("#defaultRandomQuestionsInput").addEventListener('change', e => {
+            let val = parseInt(e.target.value, 10);
+            if (isNaN(val) || val < 10) {
+                val = 10;
+                e.target.value = val;
+                toast("Minimum questions for random quiz is 10.");
+            }
+            settings.defaultRandomQuestions = val;
+            W_Settings(settings);
+            toast("Default random quiz length saved.");
         });
 
         // Helper for volume sliders
@@ -2786,7 +2929,7 @@
                 settings[settingKey] = newVolume;
                 label.textContent = `${Math.round(newVolume * 100)}%`;
                 if (settingKey === 'backgroundMusicVolume') {
-                    const bgMusic = $('#sound-background');
+                    const bgMusic = Sound.getCurrentMusicElement();
                     if (bgMusic) bgMusic.volume = newVolume;
                 }
             });
@@ -2839,46 +2982,80 @@
         const list = document.createElement("div");
         list.className = "history-list";
 
-        const header = document.createElement("div");
-        header.className = "hist-row header";
-        header.innerHTML = `
-            <div class="hist-q-cell">Question</div>
-            <div class="hist-meta-cell">Source</div>
-            <div class="hist-action-cell">Action</div>
-        `;
-        list.append(header);
+        const groupedHistory = hist.reduce((acc, item) => {
+            const groupKey = `${item.k} • set ${item.i}`;
+            if(!acc[groupKey]) acc[groupKey] = [];
+            acc[groupKey].push(item);
+            return acc;
+        }, {});
 
-        hist.forEach((item, idx) => {
-            const q = (POOL[item.k] || []).find(x => x.id === item.qid);
-            if (!q) return;
+        Object.entries(groupedHistory).forEach(([groupKey, items]) => {
+            const group = document.createElement('div');
+            group.className = 'setting-group';
+            
+            const header = document.createElement('div');
+            header.className = 'setting-group-header';
+            header.innerHTML = `
+                <div>
+                    <div class="title">${groupKey}</div>
+                </div>
+                <div class="chevron">›</div>
+            `;
+            group.append(header);
 
-            const row = document.createElement("div");
-            row.className = "hist-row";
+            const content = document.createElement('div');
+            content.className = 'setting-group-content';
+            
+            const innerList = document.createElement('div');
+            innerList.className = 'history-list';
+            innerList.style.padding = '16px';
 
-            const qCell = document.createElement("div");
-            qCell.className = "hist-q-cell";
-            qCell.textContent = q.q;
+            items.forEach((item, idx) => {
+                const q = (POOL[item.k] || []).find(x => x.id === item.qid);
+                if (!q) return;
 
-            const metaCell = document.createElement("div");
-            metaCell.className = "hist-meta-cell";
-            const [subject, subtopic] = item.k.split('::');
-            metaCell.textContent = subtopic ? `${subject} - ${subtopic} • set ${item.i}` : `${subject} • set ${item.i}`;
+                const row = document.createElement("div");
+                row.className = "hist-row";
 
-            const actionCell = document.createElement("div");
-            actionCell.className = "hist-action-cell";
-            const btn = document.createElement("button");
-            btn.className = "mini";
-            btn.textContent = "📝 Practice";
-            btn.onclick = () => {
-                Sound.playNavigate();
-                startPractice(idx);
-            };
-            actionCell.append(btn);
+                const qCell = document.createElement("div");
+                qCell.className = "hist-q-cell";
+                qCell.textContent = q.q;
 
-            row.append(qCell, metaCell, actionCell);
-            list.append(row);
+                const actionCell = document.createElement("div");
+                actionCell.className = "hist-action-cell";
+                const btn = document.createElement("button");
+                btn.className = "mini";
+                btn.textContent = "📝 Practice";
+                btn.onclick = () => {
+                    Sound.playNavigate();
+                    startPractice(hist.indexOf(item));
+                };
+                actionCell.append(btn);
+
+                row.append(qCell, actionCell);
+                innerList.append(row);
+            });
+            
+            content.append(innerList);
+            group.append(content);
+            list.append(group);
         });
+
         historyView.append(list);
+
+        // Accordion logic for history
+        $$('.setting-group-header', historyView).forEach(header => {
+            header.addEventListener('click', () => {
+                Sound.playNavigate();
+                const content = header.nextElementSibling;
+                header.classList.toggle('open');
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
     }
 
     function startPractice(startIndex) {
@@ -2986,16 +3163,6 @@
         const progress = S_Progress();
         const seenIds = new Set(Object.keys(progress.__seen || {}));
         
-        const allQuestions = [];
-        for (const key in POOL) {
-            POOL[key].forEach(q => {
-                allQuestions.push({ q, key, seen: seenIds.has(q.id) });
-            });
-        }
-        
-        // Shuffle the entire bank for variety
-        shuffleArray(allQuestions);
-
         const actions = document.createElement("div");
         actions.className = "history-actions";
         const clear = document.createElement("button");
@@ -3011,54 +3178,331 @@
         };
         actions.append(clear);
         qbankView.append(actions);
+        
+        Object.entries(POOL).forEach(([key, questions]) => {
+            const [subject, subtopic] = key.split('::');
+            const group = document.createElement('div');
+            group.className = 'setting-group'; // Reuse style
+            
+            const header = document.createElement('div');
+            header.className = 'setting-group-header';
+            header.innerHTML = `
+                <div>
+                    <div class="title">${subtopic ? `${subject} - ${subtopic}` : subject}</div>
+                </div>
+                <div class="chevron">›</div>
+            `;
+            group.append(header);
 
-        if (!allQuestions.length) {
-            const empty = document.createElement("div");
-            empty.className = "hist-empty";
-            empty.textContent = "Question bank is empty.";
-            qbankView.append(empty);
-            return;
-        }
+            const content = document.createElement('div');
+            content.className = 'setting-group-content';
+            
+            const list = document.createElement('div');
+            list.className = 'history-list';
+            list.style.padding = '16px';
 
-        const list = document.createElement("div");
-        list.className = "history-list";
+            questions.forEach(q => {
+                const row = document.createElement("div");
+                row.className = "hist-row";
+                const seen = seenIds.has(q.id);
+                 if (seen) {
+                    row.style.opacity = "0.6";
+                }
 
-        const header = document.createElement("div");
-        header.className = "hist-row header";
-        const unseenCount = allQuestions.filter(item => !item.seen).length;
-        header.innerHTML = `
-            <div class="hist-q-cell">Question (${unseenCount} unseen)</div>
-            <div class="hist-meta-cell">Source</div>
-            <div class="hist-action-cell">Status</div>
-        `;
-        list.append(header);
+                const qCell = document.createElement("div");
+                qCell.className = "hist-q-cell";
+                qCell.textContent = q.q;
 
-        allQuestions.forEach(({ q, key, seen }) => {
-            const row = document.createElement("div");
-            row.className = "hist-row";
-            if (seen) {
-                row.style.opacity = "0.6";
+                const statusCell = document.createElement("div");
+                statusCell.className = "hist-action-cell";
+                statusCell.textContent = seen ? "✅ Seen" : "❔ Unseen";
+                statusCell.style.color = seen ? 'var(--ok)' : 'var(--warn)';
+                
+                row.append(qCell, statusCell);
+                list.append(row);
+            });
+            
+            content.append(list);
+            group.append(content);
+            qbankView.append(group);
+        });
+
+        // Accordion logic for question bank
+        $$('.setting-group-header', qbankView).forEach(header => {
+            header.addEventListener('click', () => {
+                Sound.playNavigate();
+                const content = header.nextElementSibling;
+                header.classList.toggle('open');
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+    }
+    
+    /* ---------- Custom Quiz ---------- */
+    function renderCustomQuiz() {
+        customQuizView.innerHTML = "";
+        const intro = document.createElement('p');
+        intro.textContent = "Select any combination of sets from any subject to create your own custom quiz.";
+        intro.style.textAlign = 'center';
+        intro.style.marginBottom = '20px';
+        customQuizView.append(intro);
+
+        const selectionGrid = document.createElement('div');
+        selectionGrid.className = 'subject-grid'; // Reuse style
+        selectionGrid.style.gap = '16px';
+
+        Object.entries(POOL).forEach(([key, questions]) => {
+            const [subject, subtopic] = key.split('::');
+            const group = document.createElement('div');
+            group.className = 'subject-card';
+            
+            const head = document.createElement('div');
+            head.className = 'sub-head';
+            head.innerHTML = `<div class="sub-title">${subtopic ? `${subject} - ${subtopic}` : subject}</div>`;
+            group.append(head);
+
+            const setChips = document.createElement('div');
+            setChips.className = 'chips';
+            
+            const sets = {};
+            const setSize = settings.defaultSetQuestions;
+            questions.forEach((q, index) => {
+                const setNum = Math.floor(index / setSize) + 1;
+                if(!sets[setNum]) sets[setNum] = [];
+                sets[setNum].push(q);
+            });
+
+            Object.keys(sets).forEach(setNum => {
+                const label = document.createElement('label');
+                label.className = 'chip';
+                label.style.cursor = 'pointer';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.dataset.key = key;
+                checkbox.dataset.set = setNum;
+                checkbox.style.marginRight = '8px';
+                label.append(checkbox, `Set ${setNum}`);
+                setChips.append(label);
+            });
+
+            group.append(setChips);
+            selectionGrid.append(group);
+        });
+
+        customQuizView.append(selectionGrid);
+
+        const controls = document.createElement('div');
+        controls.style.marginTop = '24px';
+        controls.style.display = 'flex';
+        controls.style.justifyContent = 'center';
+        controls.style.alignItems = 'center';
+        controls.style.gap = '16px';
+        controls.style.flexWrap = 'wrap';
+
+        const inputLabel = document.createElement('label');
+        inputLabel.textContent = 'Number of questions:';
+        inputLabel.style.fontWeight = '700';
+        
+        const numberInput = document.createElement('input');
+        numberInput.type = 'number';
+        numberInput.id = 'customQuizCount';
+        numberInput.value = 10;
+        numberInput.min = 1;
+        numberInput.style.width = '80px';
+        numberInput.style.padding = '8px';
+        numberInput.style.borderRadius = '8px';
+        numberInput.style.border = '1px solid var(--line)';
+        numberInput.style.background = 'var(--tile2)';
+        numberInput.style.color = 'var(--ink-100)';
+        numberInput.style.fontFamily = 'inherit';
+        
+        const startBtn = document.createElement('button');
+        startBtn.className = 'btn primary';
+        startBtn.textContent = 'Start Custom Quiz';
+
+        // Logic to update max questions
+        selectionGrid.addEventListener('change', () => {
+            const selectedSets = $$('input[type="checkbox"]:checked', customQuizView);
+            let questionCount = 0;
+            selectedSets.forEach(checkbox => {
+                const key = checkbox.dataset.key;
+                const setNum = parseInt(checkbox.dataset.set, 10);
+                const start = (setNum - 1) * settings.defaultSetQuestions;
+                const setQuestions = POOL[key].slice(start, start + settings.defaultSetQuestions);
+                questionCount += setQuestions.length;
+            });
+            numberInput.max = questionCount > 0 ? questionCount : 1;
+            if (parseInt(numberInput.value) > questionCount) {
+                numberInput.value = questionCount;
+            }
+        });
+
+
+        startBtn.onclick = () => {
+            const selectedSets = $$('input[type="checkbox"]:checked', customQuizView);
+            if(selectedSets.length === 0) {
+                toast("Please select at least one set.");
+                return;
             }
 
-            const qCell = document.createElement("div");
-            qCell.className = "hist-q-cell";
-            qCell.textContent = q.q;
+            let customPool = [];
+            selectedSets.forEach(checkbox => {
+                const key = checkbox.dataset.key;
+                const setNum = parseInt(checkbox.dataset.set, 10);
+                const start = (setNum - 1) * settings.defaultSetQuestions;
+                const setQuestions = POOL[key].slice(start, start + settings.defaultSetQuestions);
+                customPool.push(...setQuestions);
+            });
 
-            const metaCell = document.createElement("div");
-            metaCell.className = "hist-meta-cell";
-            const [subject, subtopic] = key.split('::');
-            metaCell.textContent = subtopic ? `${subject} - ${subtopic}` : subject;
+            const numQuestions = parseInt(numberInput.value, 10);
+            if (isNaN(numQuestions) || numQuestions < 1) {
+                toast("Please enter a valid number of questions.");
+                return;
+            }
+            if (numQuestions > customPool.length) {
+                toast(`You can only set a limit of ${customPool.length} questions.`);
+                numberInput.value = customPool.length;
+                return;
+            }
 
-            const statusCell = document.createElement("div");
-            statusCell.className = "hist-action-cell";
-            statusCell.textContent = seen ? "✅ Seen" : "❔ Unseen";
-            statusCell.style.color = seen ? 'var(--ok)' : 'var(--warn)';
+            const finalQuestions = shuffleArray(customPool).slice(0, numQuestions);
+            renderQuiz('Custom Quiz', 1, finalQuestions.length, finalQuestions);
+        };
 
+        controls.append(inputLabel, numberInput, startBtn);
+        customQuizView.append(controls);
+    }
 
-            row.append(qCell, metaCell, statusCell);
-            list.append(row);
+    /* ---------- Tutorials ---------- */
+    function renderTutorials() {
+        tutorialsView.innerHTML = `
+            <div class="setting-group">
+                <div class="setting-group-header open" data-group="custom-quiz">
+                    <div>
+                        <div class="title">🔀 In-Depth Guide: Custom Quiz</div>
+                        <div class="desc">Create the perfect study session tailored to your needs.</div>
+                    </div>
+                    <div class="chevron" style="transform: rotate(90deg);">›</div>
+                </div>
+                <div class="setting-group-content" style="max-height: 500px;">
+                    <div style="padding: 16px; line-height: 1.6;">
+                        <p>The <strong>Custom Quiz</strong> tab is your most powerful tool for targeted studying. It allows you to break free from the pre-defined subjects and focus precisely on what you need to learn.</p>
+                        <h4>How It Works:</h4>
+                        <ol style="margin-left: 20px;">
+                            <li><strong>Select Your Sets:</strong> Browse through all the subjects and subtopics. Click the checkboxes next to any set you want to include. You can mix and match from different subjects to create a comprehensive review. For example, select "Set 1" from <em>Genetics</em> and "Set 3" from <em>Immunology</em>.</li>
+                            <li><strong>Choose the Length:</strong> After selecting your sets, the total number of available questions is calculated. You can then enter the exact number of questions you want in your quiz in the input box. This is great for quick 10-question reviews or longer 50-question practice exams.</li>
+                            <li><strong>Start Quiz:</strong> Click the "Start Custom Quiz" button. The app will pull your chosen number of questions randomly from all the sets you selected and begin your personalized session.</li>
+                        </ol>
+                        <h4>Pro-Tips for Effective Studying:</h4>
+                        <p>
+                           - <strong>Target Weak Areas:</strong> After a few standard quizzes, check the "Progress" tab. If you see you're struggling with a specific topic, come here and build a custom quiz using only sets from that topic.
+                           <br>- <strong>Spaced Repetition:</strong> Create a small quiz of 10-15 questions from topics you studied last week to reinforce your memory.
+                           <br>- <strong>Exam Simulation:</strong> Combine sets from all subjects to simulate a final exam, helping you practice switching between different concepts.
+                        </p>
+                    </div>
+                </div>
+            </div>
+             <div class="setting-group">
+                <div class="setting-group-header" data-group="history-practice">
+                    <div>
+                        <div class="title">⌛ Mastering the History & Practice Mode</div>
+                        <div class="desc">Turn your mistakes into your greatest strengths.</div>
+                    </div>
+                    <div class="chevron">›</div>
+                </div>
+                <div class="setting-group-content">
+                    <div style="padding: 16px; line-height: 1.6;">
+                        <p>Every question you get wrong is automatically added to the <strong>History</strong> tab. This isn't a list of failures; it's a personalized list of opportunities to learn.</p>
+                        <h4>How to Use It:</h4>
+                        <p>
+                           - <strong>Review Your Errors:</strong> Go to the "History" tab to see a list of all the questions you've answered incorrectly, grouped by the quiz you took.
+                           <br>- <strong>Practice Mode:</strong> Click the "Practice" button next to any question. This opens a special review modal where you can try the question again without the pressure of a real quiz.
+                           <br>- <strong>Instant Correction:</strong> If you get it right in practice mode, it's instantly removed from your history. This ensures your history list always reflects what you still need to work on.
+                           <br>- <strong>Clear History:</strong> Once you feel confident, you can clear your entire history and start fresh.
+                        </p>
+                    </div>
+                </div>
+            </div>
+             <div class="setting-group">
+                <div class="setting-group-header" data-group="q-bank">
+                    <div>
+                        <div class="title">🏦 Understanding the Question Bank</div>
+                    </div>
+                    <div class="chevron">›</div>
+                </div>
+                <div class="setting-group-content">
+                    <div style="padding: 16px; line-height: 1.6;">
+                        <p>The Question Bank shows you every single question available in the app. It helps you track your overall coverage of the material.</p>
+                        <ul>
+                            <li><strong>✅ Seen:</strong> This question has appeared in at least one of your quizzes.</li>
+                            <li><strong>❔ Unseen:</strong> You have not yet encountered this question.</li>
+                        </ul>
+                        <p>Use the "Clear Seen History" button to reset the status of all questions back to "Unseen". This is useful if you want to start tracking your progress from scratch. Combine this with the "Exclude Seen Questions" setting for a powerful way to ensure you see every question at least once.</p>
+                    </div>
+                </div>
+            </div>
+             <div class="setting-group">
+                <div class="setting-group-header" data-group="random-settings">
+                    <div>
+                        <div class="title">⚙️ Mastering the Randomization Settings</div>
+                    </div>
+                    <div class="chevron">›</div>
+                </div>
+                <div class="setting-group-content">
+                    <div style="padding: 16px; line-height: 1.6;">
+                        <h4>Simple Explanation</h4>
+                        <p>These toggles change how quizzes are created. You can make sets pull random questions, shuffle the order, and even hide questions you've already seen to focus on new material.</p>
+                        <hr style="border-color: var(--line); margin: 16px 0;">
+                        <h4>In-Depth Scenarios</h4>
+                        <p>Here’s how the settings interact:</p>
+                        <ul>
+                            <li><strong>Scenario 1: Standard Study</strong><br>
+                                <code>Randomize Question Selection</code> is OFF.<br>
+                                <strong>Outcome:</strong> "Set 1" will always contain the first 5 questions from the topic's list. This is predictable and good for structured learning.
+                            </li>
+                            <br>
+                            <li><strong>Scenario 2: Focused Review</strong><br>
+                                <code>Randomize Question Selection</code> is ON.<br>
+                                <code>Exclude Seen Questions</code> is ON.<br>
+                                <strong>Outcome:</strong> Each time you start a quiz, it will pull random questions *that you haven't seen before* from that topic. This is the best way to ensure you cover all the material.
+                            </li>
+                            <br>
+                             <li><strong>Scenario 3: Mixed Practice</strong><br>
+                                <code>Randomize Question Selection</code> is ON.<br>
+                                <code>Exclude Seen Questions</code> is OFF.<br>
+                                <strong>Outcome:</strong> Quizzes will be a random mix of all questions from the topic, including ones you've already answered. This is great for reinforcing what you've learned.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Accordion logic for tutorials
+        $$('.setting-group-header', tutorialsView).forEach(header => {
+            header.addEventListener('click', () => {
+                Sound.playNavigate();
+                const content = header.nextElementSibling;
+                const wasOpen = header.classList.contains('open');
+                
+                // Close all others
+                $$('.setting-group-header', tutorialsView).forEach(h => {
+                    h.classList.remove('open');
+                    h.nextElementSibling.style.maxHeight = null;
+                     h.querySelector('.chevron').style.transform = 'rotate(0deg)';
+                });
+
+                if (!wasOpen) {
+                    header.classList.add('open');
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    header.querySelector('.chevron').style.transform = 'rotate(90deg)';
+                }
+            });
         });
-        qbankView.append(list);
     }
     
     function updateMusicToggleButton() {
@@ -3104,11 +3548,13 @@
         $("#resultsScore").textContent = `You scored ${ctx.score} out of ${ctx.chosen.length}`;
         $("#resultsMessage").textContent = result.message;
 
-        putSet(ctx.key, ctx.index, {
-          score: ctx.score,
-          total: ctx.chosen.length,
-          ts: Date.now()
-        });
+        if(ctx.key !== 'Custom Quiz' && ctx.key !== 'Full Random') {
+            putSet(ctx.key, ctx.index, {
+              score: ctx.score,
+              total: ctx.chosen.length,
+              ts: Date.now()
+            });
+        }
         
         Sound.duckBackgroundMusic(400); // Faster fade out
         Sound.play(result.sound, settings[result.sound === 'sound-finish-good' ? 'finishGoodVolume' : 'finishBadVolume']);
